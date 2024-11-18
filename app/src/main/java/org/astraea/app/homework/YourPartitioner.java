@@ -24,16 +24,18 @@ public class YourPartitioner implements Partitioner {
 
   // get your magic configs
   @Override
-  public void configure(Map<String, ?> configs) {}
+  public void configure(Map<String, ?> configs) {
+
+  }
 
   // write your magic code
   @Override
   public int partition(
       String topic, Object key, byte[] keyBytes, Object value, byte[] valueBytes, Cluster cluster) {
-    var partitions = cluster.availablePartitionsForTopic(topic);
+    var ps = cluster.availablePartitionsForTopic(topic);
     // no available partition so we return -1
-    if (partitions.isEmpty()) return -1;
-    return partitions.get(0).partition();
+    if (ps.isEmpty()) return -1;
+    return ps.get((int) (Math.random() * ps.size())).partition();
   }
 
   @Override
