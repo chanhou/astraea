@@ -24,9 +24,7 @@ public class YourPartitioner implements Partitioner {
 
   // get your magic configs
   @Override
-  public void configure(Map<String, ?> configs) {
-
-  }
+  public void configure(Map<String, ?> configs) {}
 
   // write your magic code
   @Override
