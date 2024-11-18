@@ -144,9 +144,9 @@ public class SendYourData {
       Serializer<Key> serializer =
           (topic, key) -> {
             int hashKey = key.hashCode();
-            if (preCache.containsKey(hashKey)) {
-              return preCache.get(hashKey);
-            }
+            //            if (preCache.containsKey(hashKey)) {
+            //              return preCache.get(hashKey);
+            //            }
             buffer.clear();
             if (buffer.capacity() < Long.BYTES * key.vs.size()) {
               buffer = ByteBuffer.allocate(Long.BYTES * key.vs.size());
