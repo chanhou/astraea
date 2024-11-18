@@ -136,10 +136,15 @@ public class SendYourData {
       producer.close();
     }
 
+    private ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES * 3000);
+
     public YourSender(String bootstrapServers) {
       Serializer<Key> serializer =
           (topic, key) -> {
-            var buffer = ByteBuffer.allocate(Long.BYTES * key.vs.size());
+            buffer.clear();
+            if (buffer.remaining() < Long.BYTES * key.vs.size()) {
+              buffer = ByteBuffer.allocate(Long.BYTES * key.vs.size());
+            }
             key.vs.forEach(buffer::putLong);
             buffer.flip();
             var bytes = new byte[buffer.remaining()];
