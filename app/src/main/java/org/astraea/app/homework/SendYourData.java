@@ -130,13 +130,12 @@ public class SendYourData {
 
   public static class YourSender implements Closeable {
     private final KafkaProducer<Key, byte[]> producer;
+    private final ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES * 3000);
 
     @Override
     public void close() throws IOException {
       producer.close();
     }
-
-    //    private final ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES * 3000);
 
     //    private final Map<Integer, byte[]> preCache = new HashMap<>();
 
@@ -147,7 +146,6 @@ public class SendYourData {
             //            if (preCache.containsKey(hashKey)) {
             //              return preCache.get(hashKey);
             //            }
-            var buffer = ByteBuffer.allocate(Long.BYTES * 3000);
             buffer.clear();
             //            if (buffer.capacity() < Long.BYTES * key.vs.size()) {
             //              buffer = ByteBuffer.allocate(Long.BYTES * key.vs.size());
