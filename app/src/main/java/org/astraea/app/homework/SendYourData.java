@@ -23,6 +23,7 @@ import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
 import java.nio.ByteBuffer;
 import java.time.Duration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -137,10 +138,15 @@ public class SendYourData {
     }
 
     private ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES * 3000);
+    private final Map<Integer, byte[]> preCache = new HashMap<>();
 
     public YourSender(String bootstrapServers) {
       Serializer<Key> serializer =
           (topic, key) -> {
+            int hashKey = key.hashCode();
+            if (preCache.containsKey(hashKey)) {
+              return preCache.get(hashKey);
+            }
             buffer.clear();
             if (buffer.remaining() < Long.BYTES * key.vs.size()) {
               buffer = ByteBuffer.allocate(Long.BYTES * key.vs.size());
@@ -149,6 +155,7 @@ public class SendYourData {
             buffer.flip();
             var bytes = new byte[buffer.remaining()];
             buffer.get(bytes);
+            preCache.put(hashKey, bytes);
             return bytes;
           };
       producer =
