@@ -148,7 +148,7 @@ public class SendYourData {
               return preCache.get(hashKey);
             }
             buffer.clear();
-            if (buffer.remaining() < Long.BYTES * key.vs.size()) {
+            if (buffer.capacity() < Long.BYTES * key.vs.size()) {
               buffer = ByteBuffer.allocate(Long.BYTES * key.vs.size());
             }
             key.vs.forEach(buffer::putLong);
