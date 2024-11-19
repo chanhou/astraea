@@ -132,7 +132,7 @@ public class SendYourData {
   public static class YourSender implements Closeable {
     private final KafkaProducer<Key, byte[]> producer;
     private final ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES * 3000);
-    private final Map<Integer, byte[]> preCache = new HashMap<>(3000);
+    private final Map<Integer, byte[]> preCache = new HashMap<>();
 
     @Override
     public void close() throws IOException {
@@ -160,7 +160,7 @@ public class SendYourData {
                   ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
                   bootstrapServers,
                   ProducerConfig.LINGER_MS_CONFIG,
-                  "0",
+                  "10",
                   ProducerConfig.BATCH_SIZE_CONFIG,
                   "128"),
               serializer,
