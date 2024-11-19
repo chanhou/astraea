@@ -23,6 +23,7 @@ import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
 import java.nio.ByteBuffer;
 import java.time.Duration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -131,30 +132,26 @@ public class SendYourData {
   public static class YourSender implements Closeable {
     private final KafkaProducer<Key, byte[]> producer;
     private final ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES * 3000);
+    private final Map<Integer, byte[]> preCache = new HashMap<>();
 
     @Override
     public void close() throws IOException {
       producer.close();
     }
 
-    //    private final Map<Integer, byte[]> preCache = new HashMap<>();
-
     public YourSender(String bootstrapServers) {
       Serializer<Key> serializer =
           (topic, key) -> {
             int hashKey = key.hashCode();
-            //            if (preCache.containsKey(hashKey)) {
-            //              return preCache.get(hashKey);
-            //            }
+            if (preCache.containsKey(hashKey)) {
+              return preCache.get(hashKey);
+            }
             buffer.clear();
-            //            if (buffer.capacity() < Long.BYTES * key.vs.size()) {
-            //              buffer = ByteBuffer.allocate(Long.BYTES * key.vs.size());
-            //            }
             key.vs.forEach(buffer::putLong);
             buffer.flip();
             var bytes = new byte[buffer.remaining()];
             buffer.get(bytes);
-            //            preCache.put(hashKey, bytes);
+            preCache.put(hashKey, bytes);
             return bytes;
           };
       producer =
@@ -163,7 +160,7 @@ public class SendYourData {
                   ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
                   bootstrapServers,
                   ProducerConfig.LINGER_MS_CONFIG,
-                  "1000"),
+                  "100"),
               serializer,
               new ByteArraySerializer());
     }
