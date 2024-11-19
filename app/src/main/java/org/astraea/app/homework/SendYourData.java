@@ -143,15 +143,15 @@ public class SendYourData {
       Serializer<Key> serializer =
           (topic, key) -> {
             int hashKey = key.hashCode();
-            //            if (preCache.containsKey(hashKey)) {
-            //              return preCache.get(hashKey);
-            //            }
+            if (preCache.containsKey(hashKey)) {
+              return preCache.get(hashKey);
+            }
             buffer.clear();
             key.vs.forEach(buffer::putLong);
             buffer.flip();
             var bytes = new byte[buffer.remaining()];
             buffer.get(bytes);
-            //            preCache.put(hashKey, bytes);
+            preCache.put(hashKey, bytes);
             return bytes;
           };
       producer =
