@@ -160,7 +160,7 @@ public class SendYourData {
                   ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
                   bootstrapServers,
                   ProducerConfig.LINGER_MS_CONFIG,
-                  "10",
+                  "0",
                   ProducerConfig.BATCH_SIZE_CONFIG,
                   "128"),
               serializer,
